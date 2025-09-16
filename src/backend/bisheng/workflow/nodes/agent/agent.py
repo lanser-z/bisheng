@@ -1,5 +1,5 @@
 from typing import Any, Dict
-
+import re, json
 from langchain_core.messages import HumanMessage
 from langchain_core.runnables import RunnableConfig
 from bisheng_langchain.gpts.assistant import ConfigurableAssistant
@@ -16,7 +16,7 @@ from bisheng.utils.embedding import decide_embeddings
 from bisheng.workflow.callback.event import StreamMsgOverData
 from bisheng.workflow.callback.llm_callback import LLMNodeCallbackHandler
 from bisheng.workflow.nodes.base import BaseNode
-from bisheng.workflow.nodes.prompt_template import PromptTemplateParser
+from bisheng.workflow.nodes.prompt_template import PromptTemplateParser, WITH_VARIABLE_TMPL_REGEX
 
 
 
@@ -96,7 +96,30 @@ class AgentNode(BaseNode):
             'max_content': default_llm.knowledge_max_content,
             'sort_by_source_and_index': default_llm.knowledge_sort_index
         }
+        
+        extra_kb_ids = self.node_params.get('knowledge_ids_list')
+        if extra_kb_ids:
+            # knowledge_ids_list 是字符串形式的json列表、整数，或某个符合上述形式的变量
+            var_key = re.findall(WITH_VARIABLE_TMPL_REGEX, extra_kb_ids)
+            if var_key:
+                extra_kb_ids = self.get_other_node_variable(var_key[0])
 
+            try:
+                parsed = json.loads(extra_kb_ids)
+            except json.JSONDecodeError:
+                parsed = [int(extra_kb_ids)]
+            except Exception as e:
+                logger.warning(f'AgentNode knowledge ids {extra_kb_ids} parse error: {e}')
+            else:
+                extra_kb_ids = [x for x in parsed if type(x) is int]
+                exists = set(self._knowledge_ids)
+                for kid in extra_kb_ids:
+                    if kid not in exists:
+                        self._knowledge_ids.append(kid)
+                        exists.add(kid)
+                # 明确设置为知识库模式
+                self._knowledge_type = 'knowledge'
+        
         func_tools = self._init_tools()
         knowledge_tools = self._init_knowledge_tools(knowledge_retriever)
         sql_agent_tools = self.init_sql_agent_tool()

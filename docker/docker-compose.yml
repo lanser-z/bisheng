@@ -1,10 +1,9 @@
 services:
   mysql:
-    container_name: bisheng-mysql
+    container_name: stx-bisheng-mysql
     image: mysql:8.0
-    
     ports:
-      - "3306:3306"
+      - ":3306"
     environment:
       MYSQL_ROOT_PASSWORD: "1234"  # 数据库密码，如果修改需要同步修改bisheng/congfig/config.yaml配置database_url的mysql连接密码
       MYSQL_DATABASE: bisheng
@@ -21,10 +20,10 @@ services:
     restart: on-failure
 
   redis:
-    container_name: bisheng-redis
+    container_name: stx-bisheng-redis
     image: redis:7.0.4
     ports:
-      - "6379:6379"
+      - ":6379"
     environment:
       TZ: Asia/Shanghai
     volumes:
@@ -39,10 +38,10 @@ services:
     restart: on-failure
 
   office:
-    container_name: bisheng-office
+    container_name: stx-bisheng-office
     image: onlyoffice/documentserver:7.1.1
     ports:
-      - "8701:80"
+      - "9391:80"
     environment:
       TZ: Asia/Shanghai
       JWT_ENABLED: "false"
@@ -52,10 +51,10 @@ services:
     restart: on-failure
 
   backend:
-    container_name: bisheng-backend
-    image: dataelement/bisheng-backend:v2.0.3
+    container_name: stx-bisheng-backend
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/dataelement/bisheng-backend:v2.0.3
     ports:
-      - "7860:7860"
+      - ":7860"
     environment:
       TZ: Asia/Shanghai
       BS_MILVUS_CONNECTION_ARGS: '{"host":"milvus","port":"19530","user":"","password":"","secure":false}'
@@ -73,6 +72,7 @@ services:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/bisheng/config/config.yaml:/app/bisheng/config.yaml
       - ${DOCKER_VOLUME_DIRECTORY:-.}/bisheng/entrypoint.sh:/app/entrypoint.sh
       - ${DOCKER_VOLUME_DIRECTORY:-.}/data/bisheng:/app/data
+      - ../src/backend/bisheng/workflow:/app/bisheng/workflow
     security_opt:
       - seccomp:unconfined
     command: sh entrypoint.sh api  # 启动api服务
@@ -92,8 +92,8 @@ services:
         condition: service_started
   
   backend_worker:
-    container_name: bisheng-backend-worker
-    image: dataelement/bisheng-backend:v2.0.3
+    container_name: stx-bisheng-backend-worker
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/dataelement/bisheng-backend:v2.0.3
     environment:
       TZ: Asia/Shanghai
       BS_MILVUS_CONNECTION_ARGS: '{"host":"milvus","port":"19530","user":"","password":"","secure":false}'
@@ -111,6 +111,7 @@ services:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/bisheng/config/config.yaml:/app/bisheng/config.yaml
       - ${DOCKER_VOLUME_DIRECTORY:-.}/bisheng/entrypoint.sh:/app/entrypoint.sh
       - ${DOCKER_VOLUME_DIRECTORY:-.}/data/bisheng:/app/data
+      - ../src/backend/bisheng/workflow:/app/bisheng/workflow
     security_opt:
       - seccomp:unconfined
     command: sh entrypoint.sh worker  # 启动celery的异步worker服务，用来处理一些耗时的任务
@@ -124,10 +125,10 @@ services:
         condition: service_started
 
   frontend:
-    container_name: bisheng-frontend
-    image: dataelement/bisheng-frontend:v2.0.3
+    container_name: stx-bisheng-frontend
+    image: stx-bisheng-frontend:v2.0.3
     ports:
-      - "3001:3001"
+      - "9390:3001"
     environment:
       TZ: Asia/Shanghai
     volumes:
@@ -138,12 +139,12 @@ services:
       - backend
 
   elasticsearch:
-    container_name: bisheng-es
+    container_name: stx-bisheng-es
     image: docker.io/bitnami/elasticsearch:8.12.0
     user: root
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - ":9200"
+      - ":9300"
     environment:
       TZ: Asia/Shanghai
     volumes:
@@ -151,7 +152,7 @@ services:
     restart: on-failure
 
   etcd:
-    container_name: bisheng-milvus-etcd
+    container_name: stx-bisheng-milvus-etcd
     image: quay.io/coreos/etcd:v3.5.5
     environment:
       ETCD_AUTO_COMPACTION_MODE: revision
@@ -170,14 +171,14 @@ services:
       retries: 3
 
   minio:
-    container_name: bisheng-milvus-minio
+    container_name: stx-bisheng-milvus-minio
     image: minio/minio:RELEASE.2023-03-20T20-16-18Z
     environment:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
     ports:
-      - "9100:9000"
-      - "9101:9001"
+      - ":9000"
+      - ":9001"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${DOCKER_VOLUME_DIRECTORY:-.}/data/milvus-minio:/minio_data
@@ -190,7 +191,7 @@ services:
       retries: 3
 
   milvus:
-    container_name: bisheng-milvus-standalone
+    container_name: stx-bisheng-milvus-standalone
     image: milvusdb/milvus:v2.5.10
     command: ["milvus", "run", "standalone"]
     security_opt:
@@ -209,8 +210,8 @@ services:
       timeout: 20s
       retries: 3
     ports:
-      - "19530:19530"
-      - "9091:9091"
+      - ":19530"
+      - ":9091"
     depends_on:
       - etcd
       - minio

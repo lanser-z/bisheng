@@ -557,6 +557,15 @@ const workflowTemplate = [
                             "type": "knowledge",
                             "value": []
                         }
+                    },
+                    {
+                        "key": "knowledge_ids_list",
+                        "label": "额外知识库ID列表",
+                        "type": "var_textarea",
+                        "test": "var",
+                        "value": "",
+                        "placeholder": "多知识库填写JSON数组如[1,2,3]，单知识库写整数，也可选择变量（变量需解析为此格式）",
+                        "help": "该字段用于追加知识库ID。后端将把其解析为 JSON 列表并与上方所选合并，最终按知识库模式检索。"
                     }
                 ]
             },
