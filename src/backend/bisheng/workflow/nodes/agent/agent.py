@@ -106,6 +106,8 @@ class AgentNode(BaseNode):
 
             try:
                 parsed = json.loads(extra_kb_ids)
+                if type(parsed) is not list:
+                    parsed = [parsed]
             except json.JSONDecodeError:
                 parsed = [int(extra_kb_ids)]
             except Exception as e:
