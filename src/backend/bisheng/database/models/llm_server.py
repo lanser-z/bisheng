@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
 
-from sqlalchemy import CHAR, JSON, Column, DateTime, Text, UniqueConstraint, delete, text, update
+from sqlalchemy import CHAR, String, JSON, Column, DateTime, Text, UniqueConstraint, delete, text, update
 from sqlmodel import Field, select
 
 from bisheng.database.base import session_getter
@@ -42,7 +42,7 @@ class LLMModelType(Enum):
 class LLMServerBase(SQLModelSerializable):
     name: str = Field(default='', index=True, unique=True, description='服务名称')
     description: Optional[str] = Field(default='', sa_column=Column(Text), description='服务描述')
-    type: str = Field(sa_column=Column(CHAR(20)), description='服务提供方类型')
+    type: str = Field(sa_column=Column(String(20)), description='服务提供方类型')
     limit_flag: bool = Field(default=False, description='是否开启每日调用次数限制')
     limit: int = Field(default=0, description='每日调用次数限制')
     config: Optional[Dict] = Field(default=None, sa_column=Column(JSON), description='服务提供方公共配置')
@@ -50,7 +50,7 @@ class LLMServerBase(SQLModelSerializable):
     create_time: Optional[datetime] = Field(default=None, sa_column=Column(
         DateTime, nullable=False, index=True, server_default=text('CURRENT_TIMESTAMP')))
     update_time: Optional[datetime] = Field(default=None, sa_column=Column(
-        DateTime, nullable=False, server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
+        DateTime, nullable=False, server_default=text('CURRENT_TIMESTAMP')))
 
 
 class LLMModelBase(SQLModelSerializable):
@@ -58,7 +58,7 @@ class LLMModelBase(SQLModelSerializable):
     name: str = Field(default='', description='模型展示名')
     description: Optional[str] = Field(default='', sa_column=Column(Text), description='模型描述')
     model_name: str = Field(default='', description='模型名称，实例化组件时用的参数')
-    model_type: str = Field(sa_column=Column(CHAR(20)), description='模型类型')
+    model_type: str = Field(sa_column=Column(String(20)), description='模型类型')
     config: Optional[Dict] = Field(default=None, sa_column=Column(JSON), description='服务提供方公共配置')
     status: int = Field(default=2, description='模型状态。0：正常，1：异常, 2: 未知')
     remark: Optional[str] = Field(default='', sa_column=Column(Text), description='异常原因')
@@ -67,7 +67,7 @@ class LLMModelBase(SQLModelSerializable):
     create_time: Optional[datetime] = Field(default=None, sa_column=Column(
         DateTime, nullable=False, index=True, server_default=text('CURRENT_TIMESTAMP')))
     update_time: Optional[datetime] = Field(default=None, sa_column=Column(
-        DateTime, nullable=False, server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
+        DateTime, nullable=False, server_default=text('CURRENT_TIMESTAMP')))
 
 
 class LLMServer(LLMServerBase, table=True):

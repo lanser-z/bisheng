@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import field_validator, BaseModel
 from sqlalchemy.dialects.mysql import LONGTEXT
+from sqlalchemy import Text
 from sqlmodel import JSON, Column, DateTime, Field, func, select, text, update
 
 from bisheng.database.base import session_getter
@@ -46,7 +47,7 @@ class FinetuneBase(SQLModelSerializable):
     train_data: Optional[List[Dict]] = Field(default=None, sa_column=Column(JSON), description='个人训练数据集信息')
     preset_data: Optional[List[Dict]] = Field(default=None, sa_column=Column(JSON), description='预置训练数据集信息')
     status: int = Field(default=FinetuneStatus.TRAINING.value, index=True, description='训练任务的状态')
-    reason: Optional[str] = Field(default='', sa_column=Column(LONGTEXT), description='任务失败原因')
+    reason: Optional[str] = Field(default='', sa_column=Column(Text), description='任务失败原因')
     log_path: Optional[str] = Field(default='', max_length=512, description='训练日志在minio上的路径')
     report: Optional[Dict] = Field(default=None, sa_column=Column(JSON), description='训练任务的评估报告数据')
     user_id: int = Field(default=None, index=True, description='创建人ID')
@@ -54,7 +55,7 @@ class FinetuneBase(SQLModelSerializable):
     create_time: Optional[datetime] = Field(default=None, sa_column=Column(
         DateTime, nullable=False, index=True, server_default=text('CURRENT_TIMESTAMP')))
     update_time: Optional[datetime] = Field(default=None, sa_column=Column(
-        DateTime, nullable=False, server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
+        DateTime, nullable=False, server_default=text('CURRENT_TIMESTAMP')))
 
     # 检查训练集数据格式
     @classmethod

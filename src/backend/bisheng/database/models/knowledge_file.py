@@ -6,6 +6,7 @@ from typing import List, Optional
 # if TYPE_CHECKING:
 from pydantic import field_validator
 from sqlalchemy import JSON, Column, DateTime, String, or_, text, Text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, delete, func, select, update, col
 
 from bisheng.database.base import session_getter, async_session_getter
@@ -102,7 +103,7 @@ class KnowledgeFile(KnowledgeFileBase, table=True):
 
 class QAKnowledge(QAKnowledgeBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    questions: Optional[List[str]] = Field(default=None, sa_column=Column(JSON))
+    questions: Optional[List[str]] = Field(default=None, sa_column=Column(JSONB))
     answers: Optional[str] = Field(default=None, sa_column=Column(Text))
 
 
@@ -349,7 +350,7 @@ class QAKnoweldgeDao(QAKnowledgeBase):
         with session_getter() as session:
             group_filters = []
             for one in question:
-                group_filters.append(func.json_contains(QAKnowledge.questions, json.dumps(one)))
+                group_filters.append(QAKnowledge.questions.contains([one]))
             statement = select(QAKnowledge).where(
                 or_(*group_filters)).where(QAKnowledge.knowledge_id == knowledge_id)
             if exclude_id:

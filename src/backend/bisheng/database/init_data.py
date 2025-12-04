@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import datetime
 from typing import List
 
 from bisheng.database.models.template import Template
@@ -24,6 +25,16 @@ from bisheng.database.models.user_role import UserRoleDao
 from bisheng.database.models.group import Group, DefaultGroup
 from bisheng.database.models.role_access import RoleAccess, AccessType
 
+
+def format_datetime_in_jsontext(item: dict) -> dict:
+    ''' 兼容PostgreSQL: 将json文本中的时间字符串转换为datetime对象 '''
+    for time_field in ("create_time", "update_time"):
+        if time_field in item and isinstance(item[time_field], str):
+            try:
+                item[time_field] = datetime.datetime.strptime(item[time_field], "%Y-%m-%d %H:%M:%S")
+            except Exception:
+                item[time_field] = None
+    return item
 
 async def init_default_data():
     """初始化数据库"""
@@ -91,6 +102,7 @@ async def init_default_data():
                 if not templates:
                     json_items = json.loads(read_from_conf('data/template.json'))
                     for item in json_items:
+                        format_datetime_in_jsontext(item)
                         session.add(Template(**item))
                     await session.commit()
 
@@ -101,6 +113,7 @@ async def init_default_data():
                     preset_tools = []
                     json_items = json.loads(read_from_conf('data/t_gpts_tools.json'))
                     for item in json_items:
+                        format_datetime_in_jsontext(item)
                         preset_tool = GptsTools(**item)
                         preset_tools.append(preset_tool)
                     session.add_all(preset_tools)
@@ -112,6 +125,7 @@ async def init_default_data():
                     preset_tools_type = []
                     json_items = json.loads(read_from_conf('data/t_gpts_tools_type.json'))
                     for item in json_items:
+                        format_datetime_in_jsontext(item)
                         preset_tool_type = GptsToolsType(**item)
                         preset_tools_type.append(preset_tool_type)
                     session.add_all(preset_tools_type)
@@ -135,6 +149,7 @@ async def init_default_data():
                     preset_models = []
                     json_items = json.loads(read_from_conf('data/sft_model.json'))
                     for item in json_items:
+                        format_datetime_in_jsontext(item)
                         preset_model = SftModel(**item)
                         preset_models.append(preset_model)
                     session.add_all(preset_models)
@@ -145,14 +160,15 @@ async def init_default_data():
                 flow_version = flow_version.all()
                 if not flow_version:
                     sql_query = text(
-                        "INSERT INTO `flowversion` (`name`, `flow_id`, `data`, `user_id`, `is_current`, `is_delete`) \
-                     select 'v0', `id` as flow_id, `data`, `user_id`, 1, 0 from `flow`;")
+                        "INSERT INTO flowversion (name, flow_id, data, user_id, is_current, is_delete) "
+                        "SELECT 'v0', id AS flow_id, data, user_id, 1, 0 FROM flow;"
+                    )
                     await session.execute(sql_query)
                     await session.commit()
                     # 修改表单数据表
                     sql_query = text(
-                        'UPDATE `t_variable_value` a SET a.version_id=(SELECT `id` from `flowversion` '
-                        'WHERE flow_id=a.flow_id and is_current=1)'
+                        "UPDATE t_variable_value a SET version_id=(SELECT id FROM flowversion "
+                        "WHERE flow_id=a.flow_id AND is_current=1)"
                     )
                     await session.execute(sql_query)
                     await session.commit()

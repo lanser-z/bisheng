@@ -3,7 +3,7 @@ from enum import Enum
 from typing import List, Optional
 
 from sqlmodel import Field, select, Column, DateTime, text, Text, func, or_, JSON
-
+from sqlalchemy.dialects.postgresql import JSONB
 from bisheng.database.base import session_getter
 from bisheng.database.models.base import SQLModelSerializable
 from bisheng.utils import generate_uuid
@@ -63,7 +63,7 @@ class AuditLogBase(SQLModelSerializable):
     """
     operator_id: int = Field(index=True, description="操作用户的ID")
     operator_name: Optional[str] = Field(description="用户名")
-    group_ids: Optional[List[int]] = Field(sa_column=Column(JSON), description="所属用户组的ID列表")
+    group_ids: Optional[List[int]] = Field(sa_column=Column(JSONB), description="所属用户组的ID列表")
     system_id: Optional[str] = Field(index=True, description="系统模块")
     event_type: Optional[str] = Field(index=True, description="操作行为")
     object_type: Optional[str] = Field(index=True, description="操作对象类型")
@@ -99,7 +99,7 @@ class AuditLogDao(AuditLogBase):
         if group_ids:
             group_filters = []
             for one in group_ids:
-                group_filters.append(func.json_contains(AuditLog.group_ids, str(one)))
+                group_filters.append(AuditLog.group_ids.contains([one]))
             statement = statement.where(or_(*group_filters))
             count_statement = count_statement.where(or_(*group_filters))
         if operator_ids:
@@ -134,7 +134,7 @@ class AuditLogDao(AuditLogBase):
         if group_ids:
             group_filters = []
             for one in group_ids:
-                group_filters.append(func.json_contains(AuditLog.group_ids, str(one)))
+                group_filters.append(AuditLog.group_ids.contains([one]))
             statement = statement.where(or_(*group_filters))
 
         with session_getter() as session:

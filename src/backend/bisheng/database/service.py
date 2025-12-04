@@ -22,14 +22,14 @@ class DatabaseService(Service):
         # self.script_location = langflow_dir / "alembic"
         # self.alembic_cfg_path = langflow_dir / "alembic.ini"
 
-        self.async_database_url = database_url.replace("pymysql", "aiomysql")
+        self.async_database_url = database_url.replace("psycopg2", "asyncpg")
 
         self.engine = self._create_engine()
         self.async_engine = self._create_async_engine()
 
     def _create_engine(self):
         connect_args = {'check_same_thread': False} if self.database_url.startswith("sqlite") else {}
-        connect_args['charset'] = "utf8mb4"  # Ensure utf8mb4 charset for MySQL
+        # connect_args['charset'] = "utf8mb4"  # Ensure utf8mb4 charset for MySQL
         return create_engine(
             self.database_url,
             connect_args=connect_args,
@@ -41,7 +41,7 @@ class DatabaseService(Service):
 
     def _create_async_engine(self):
         connect_args = {'check_same_thread': False} if self.async_database_url.startswith("sqlite") else {}
-        connect_args['charset'] = "utf8mb4"  # Ensure utf8mb4 charset for MySQL
+        # connect_args['charset'] = "utf8mb4"  # Ensure utf8mb4 charset for MySQL
         return create_async_engine(
             self.async_database_url,
             connect_args=connect_args,

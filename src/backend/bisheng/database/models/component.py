@@ -18,12 +18,13 @@ class ComponentBase(SQLModelSerializable):
     create_time: Optional[datetime] = Field(default=None, sa_column=Column(
         DateTime, nullable=False, index=True, server_default=text('CURRENT_TIMESTAMP')))
     update_time: Optional[datetime] = Field(default=None, sa_column=Column(
-        DateTime, nullable=False, server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
+        DateTime, nullable=False, server_default=text('CURRENT_TIMESTAMP')))
 
 
 class Component(ComponentBase, table=True):
     id: str = Field(default_factory=generate_uuid, primary_key=True, unique=True)
     data: Optional[Any] = Field(default=None, sa_column=Column(JSON))
+    version: Optional[str] = Field(default='', index=True, description='组件版本')
 
 
 class ComponentDao(ComponentBase):

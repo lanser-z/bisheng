@@ -12,7 +12,7 @@ from bisheng.settings import settings
 from bisheng.utils.logger import logger
 from sqlmodel import Session
 
-db_service: 'DatabaseService' = DatabaseService(settings.database_url)
+db_service: 'DatabaseService' = DatabaseService( 'postgresql+psycopg2://test:test123A@ogauss:5432/postgres' )
 
 
 @contextmanager
