@@ -488,6 +488,28 @@
         "label": "Retrieved Result"
       }
     },
+    "qa_retriever_pro": {
+      "name": "QA Retrieval Pro",
+      "description": "Retrieves Q&A pairs from the QA knowledge base. Supports dynamically getting knowledge base ID from variables at runtime.",
+      "检索设置": "Retrieval Settings",
+      "输出": "Output",
+      "user_question": {
+        "label": "Input Variable",
+        "placeholder": "Select a question to search"
+      },
+      "qa_knowledge_id_variable": {
+        "label": "Knowledge Base ID Variable",
+        "placeholder": "Select knowledge base ID variable",
+        "help": "Get knowledge base ID from variable, supports string or list format"
+      },
+      "score": {
+        "label": "Similarity Threshold",
+        "help": "Results below this threshold will be filtered out."
+      },
+      "retrieved_result": {
+        "label": "Retrieved Result"
+      }
+    },
     "rag": {
       "name": "Document Retrieval",
       "description": "Searches knowledge bases and generates final answers using an LLM. Supports parallel question processing.",

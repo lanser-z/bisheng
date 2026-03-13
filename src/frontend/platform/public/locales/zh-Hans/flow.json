@@ -489,6 +489,28 @@
         "label": "检索结果"
       }
     },
+    "qa_retriever_pro": {
+      "name": "QA知识库检索Pro",
+      "description": "从 QA 知识库中检索问题以及对应的答案。支持运行时动态获取知识库ID，实现灵活的知识库切换。",
+      "检索设置": "检索设置",
+      "输出": "输出",
+      "user_question": {
+        "label": "输入变量",
+        "placeholder": "请选择检索问题"
+      },
+      "qa_knowledge_id_variable": {
+        "label": "知识库ID变量",
+        "placeholder": "请选择知识库ID变量",
+        "help": "从变量中获取知识库ID，支持字符串或列表格式"
+      },
+      "score": {
+        "label": "相似度阈值",
+        "help": "低于阈值的结果将会被过滤"
+      },
+      "retrieved_result": {
+        "label": "检索结果"
+      }
+    },
     "rag": {
       "name": "文档知识库问答",
       "description": "根据用户问题从知识库中检索相关内容，结合检索结果调用大模型生成最终结果，支持多个问题并行执行。",

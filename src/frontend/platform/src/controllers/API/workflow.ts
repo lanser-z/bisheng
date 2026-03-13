@@ -758,6 +758,63 @@ const workflowTemplate = [
         ]
     },
     {
+        "id": "qa_retriever_pro_xxx",
+        "name": "true",
+        "description": "true",
+        "type": "qa_retriever_pro",
+        "v": "1",
+        "group_params": [
+            {
+                "name": "检索设置",
+                "params": [
+                    {
+                        "key": "user_question",
+                        "label": "true",
+                        "type": "var_select",
+                        "test": "var",
+                        "value": "",
+                        "required": true,
+                        "placeholder": "true"
+                    },
+                    {
+                        "key": "qa_knowledge_id_variable",
+                        "label": "true",
+                        "type": "var_select",
+                        "test": "var",
+                        "value": "",
+                        "required": true,
+                        "placeholder": "true",
+                        "help": "true"
+                    },
+                    {
+                        "key": "score",
+                        "label": "true",
+                        "type": "slide",
+                        "value": 0.8,
+                        "scope": [
+                            0.01,
+                            0.99
+                        ],
+                        "step": 0.01,
+                        "help": "true"
+                    }
+                ]
+            },
+            {
+                "name": "输出",
+                "params": [
+                    {
+                        "key": "retrieved_result",
+                        "label": "true",
+                        "type": "var",
+                        "global": "key",
+                        "value": ""
+                    }
+                ]
+            }
+        ]
+    },
+    {
         "id": "rag_xxx",
         "name": "true",
         "description": "true",
