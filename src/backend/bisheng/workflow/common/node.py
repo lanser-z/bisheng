@@ -17,6 +17,7 @@ class NodeType(Enum):
     OUTPUT = "output"
     FAKE_OUTPUT = "fake_output"
     QA_RETRIEVER = "qa_retriever"
+    QA_RETRIEVER_PRO = "qa_retriever_pro"
     RAG = "rag"
     REPORT = "report"
     TOOL = "tool"
