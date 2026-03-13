@@ -86,7 +86,8 @@ class QARetrieverProNode(BaseNode):
         params = {}
         params['search_kwargs'] = {'k': 1, 'score_threshold': self._score}
         params['search_type'] = 'similarity_score_threshold'
-        params['collection_name'] = knowledge_ids
+        # instantiate_vectorstore 期望 collection_name 格式为 [{'key': 'knowledge_id'}]
+        params['collection_name'] = [{'key': kid} for kid in knowledge_ids]
         params['user_name'] = UserDao.get_user(self.user_id).user_name
         params['_is_check_auth'] = False
 
