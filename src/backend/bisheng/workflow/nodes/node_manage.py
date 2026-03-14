@@ -10,6 +10,7 @@ from bisheng.workflow.nodes.output.output import OutputNode
 from bisheng.workflow.nodes.qa_retriever.qa_retriever import QARetrieverNode
 from bisheng.workflow.nodes.qa_retriever_pro.qa_retriever_pro import QARetrieverProNode
 from bisheng.workflow.nodes.rag.rag import RagNode
+from bisheng.workflow.nodes.ragflow_retriever.ragflow_retriever import RagFlowRetrieverNode
 from bisheng.workflow.nodes.report.report import ReportNode
 from bisheng.workflow.nodes.start.start import StartNode
 from bisheng.workflow.nodes.tool.tool import ToolNode
@@ -24,6 +25,7 @@ NODE_CLASS_MAP = {
     NodeType.REPORT.value: ReportNode,
     NodeType.QA_RETRIEVER.value: QARetrieverNode,
     NodeType.QA_RETRIEVER_PRO.value: QARetrieverProNode,
+    NodeType.RAGFLOW_RETRIEVER.value: RagFlowRetrieverNode,
     NodeType.CONDITION.value: ConditionNode,
     NodeType.AGENT.value: AgentNode,
     NodeType.CODE.value: CodeNode,

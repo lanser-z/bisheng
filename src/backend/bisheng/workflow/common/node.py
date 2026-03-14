@@ -22,6 +22,7 @@ class NodeType(Enum):
     REPORT = "report"
     TOOL = "tool"
     KNOWLEDGE_RETRIEVER = "knowledge_retriever"
+    RAGFLOW_RETRIEVER = "ragflow_retriever"
 
     NOTE = 'note'  # Notes node Knowledge is used to display annotations, not actual execution nodes
 

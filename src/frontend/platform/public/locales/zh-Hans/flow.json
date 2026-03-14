@@ -511,6 +511,54 @@
         "label": "检索结果"
       }
     },
+    "ragflow_retriever": {
+      "name": "RagFlow检索",
+      "description": "通过 RagFlow API 进行知识库检索，支持运行时动态配置知识库ID，支持知识图谱多跳检索。",
+      "RagFlow配置": "RagFlow配置",
+      "检索设置": "检索设置",
+      "输出": "输出",
+      "ragflow_api_url": {
+        "label": "API地址",
+        "placeholder": "例如: http://localhost:9380",
+        "help": "RagFlow服务的API地址"
+      },
+      "ragflow_api_key": {
+        "label": "API密钥",
+        "placeholder": "请输入RagFlow API Key",
+        "help": "在RagFlow设置中获取API Key"
+      },
+      "question": {
+        "label": "检索问题",
+        "placeholder": "请选择检索问题变量"
+      },
+      "dataset_ids": {
+        "label": "知识库ID",
+        "placeholder": "请选择知识库ID变量",
+        "help": "从变量中获取RagFlow知识库ID，支持字符串、逗号分隔或JSON数组格式"
+      },
+      "similarity_threshold": {
+        "label": "相似度阈值",
+        "help": "低于阈值的结果将被过滤，默认0.2"
+      },
+      "vector_similarity_weight": {
+        "label": "向量权重",
+        "help": "向量相似度权重(0-1)，剩余为关键词相似度权重"
+      },
+      "page_size": {
+        "label": "返回数量",
+        "help": "返回的检索结果数量"
+      },
+      "use_kg": {
+        "label": "知识图谱检索",
+        "help": "启用知识图谱进行多跳检索"
+      },
+      "retrieved_result": {
+        "label": "检索结果"
+      },
+      "chunks": {
+        "label": "原始结果"
+      }
+    },
     "rag": {
       "name": "文档知识库问答",
       "description": "根据用户问题从知识库中检索相关内容，结合检索结果调用大模型生成最终结果，支持多个问题并行执行。",

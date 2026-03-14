@@ -1,5 +1,5 @@
 import { cname } from "@/components/bs-ui/utils";
-import { BookOpenCheck, BookOpenTextIcon, Bot, Brain, Code2, FileDown, FileSearch, FlagTriangleRight, Hammer, Home, Keyboard, MessagesSquareIcon, Split } from "lucide-react";
+import { BookOpenCheck, BookOpenTextIcon, Bot, Brain, Code2, Database, FileDown, FileSearch, FlagTriangleRight, Hammer, Home, Keyboard, MessagesSquareIcon, Split } from "lucide-react";
 export const Icons = {
     'start': Home,
     'input': Keyboard,
@@ -9,6 +9,7 @@ export const Icons = {
     'rag': BookOpenTextIcon,
     'qa_retriever': FileSearch,
     'qa_retriever_pro': FileSearch,
+    'ragflow_retriever': Database,
     'agent': Bot,
     'end': FlagTriangleRight,
     'condition': Split,
@@ -24,6 +25,7 @@ export const Colors = {
     'rag': 'bg-[#BBDBFF]',
     'qa_retriever': 'bg-[#B8EEDF]',
     'qa_retriever_pro': 'bg-[#B8EEDF]',
+    'ragflow_retriever': 'bg-[#C4E0F9]',
     'agent': 'bg-[#FFD89A]',
     'end': 'bg-red-400',
     'condition': 'bg-[#EDC9E9]',

@@ -815,6 +815,115 @@ const workflowTemplate = [
         ]
     },
     {
+        "id": "ragflow_retriever_xxx",
+        "name": "true",
+        "description": "true",
+        "type": "ragflow_retriever",
+        "v": "1",
+        "group_params": [
+            {
+                "name": "RagFlow配置",
+                "params": [
+                    {
+                        "key": "ragflow_api_url",
+                        "label": "true",
+                        "type": "input",
+                        "value": "",
+                        "required": true,
+                        "placeholder": "true",
+                        "help": "true"
+                    },
+                    {
+                        "key": "ragflow_api_key",
+                        "label": "true",
+                        "type": "password",
+                        "value": "",
+                        "required": true,
+                        "placeholder": "true",
+                        "help": "true"
+                    }
+                ]
+            },
+            {
+                "name": "检索设置",
+                "params": [
+                    {
+                        "key": "question",
+                        "label": "true",
+                        "type": "var_select",
+                        "test": "var",
+                        "value": "",
+                        "required": true,
+                        "placeholder": "true"
+                    },
+                    {
+                        "key": "dataset_ids",
+                        "label": "true",
+                        "type": "var_select",
+                        "test": "var",
+                        "value": "",
+                        "required": true,
+                        "placeholder": "true",
+                        "help": "true"
+                    },
+                    {
+                        "key": "similarity_threshold",
+                        "label": "true",
+                        "type": "slide",
+                        "value": 0.2,
+                        "scope": [0.01, 1.0],
+                        "step": 0.01,
+                        "help": "true"
+                    },
+                    {
+                        "key": "vector_similarity_weight",
+                        "label": "true",
+                        "type": "slide",
+                        "value": 0.3,
+                        "scope": [0.0, 1.0],
+                        "step": 0.1,
+                        "help": "true"
+                    },
+                    {
+                        "key": "page_size",
+                        "label": "true",
+                        "type": "input_number",
+                        "value": 10,
+                        "min": 1,
+                        "max": 100,
+                        "help": "true"
+                    },
+                    {
+                        "key": "use_kg",
+                        "label": "true",
+                        "type": "switch",
+                        "value": false,
+                        "help": "true"
+                    }
+                ]
+            },
+            {
+                "name": "输出",
+                "params": [
+                    {
+                        "key": "retrieved_result",
+                        "label": "true",
+                        "type": "var",
+                        "global": "key",
+                        "value": ""
+                    },
+                    {
+                        "key": "chunks",
+                        "label": "true",
+                        "type": "var",
+                        "global": "key",
+                        "value": ""
+                    }
+                ]
+            }
+        ]
+    },
+    {
         "id": "rag_xxx",
         "name": "true",
         "description": "true",

@@ -511,6 +511,54 @@
         "label": "検索結果"
       }
     },
+    "ragflow_retriever": {
+      "name": "RagFlow検索",
+      "description": "RagFlow APIを通じて知識ベースを検索します。実行時に知識ベースIDを動的に設定でき、ナレッジグラフのマルチホップ検索もサポートします。",
+      "RagFlow配置": "RagFlow設定",
+      "检索设置": "検索設定",
+      "输出": "出力",
+      "ragflow_api_url": {
+        "label": "API URL",
+        "placeholder": "例: http://localhost:9380",
+        "help": "RagFlowサービスのAPIアドレス"
+      },
+      "ragflow_api_key": {
+        "label": "APIキー",
+        "placeholder": "RagFlow APIキーを入力",
+        "help": "RagFlow設定からAPIキーを取得"
+      },
+      "question": {
+        "label": "検索質問",
+        "placeholder": "検索質問変数を選択"
+      },
+      "dataset_ids": {
+        "label": "データセットID",
+        "placeholder": "データセットID変数を選択",
+        "help": "変数からRagFlowデータセットIDを取得。文字列、カンマ区切り、JSON配列形式に対応"
+      },
+      "similarity_threshold": {
+        "label": "類似度閾値",
+        "help": "閾値未満の結果はフィルタリング、デフォルト0.2"
+      },
+      "vector_similarity_weight": {
+        "label": "ベクトル重み",
+        "help": "ベクトル類似度の重み(0-1)、残りがキーワード類似度の重み"
+      },
+      "page_size": {
+        "label": "結果数",
+        "help": "返す検索結果の数"
+      },
+      "use_kg": {
+        "label": "ナレッジグラフ検索",
+        "help": "ナレッジグラフでマルチホップ検索を有効化"
+      },
+      "retrieved_result": {
+        "label": "検索結果"
+      },
+      "chunks": {
+        "label": "生データ"
+      }
+    },
     "rag": {
       "name": "文書知識ベースQA",
       "description": "ユーザーの質問に基づき知識ベースから関連内容を検索し、検索結果を用いて大規模モデルで最終結果を生成します。複数の質問を並行して処理できます。",

@@ -510,6 +510,54 @@
         "label": "Retrieved Result"
       }
     },
+    "ragflow_retriever": {
+      "name": "RagFlow Retrieval",
+      "description": "Retrieves from RagFlow knowledge bases via HTTP API. Supports dynamic knowledge base ID configuration and knowledge graph multi-hop retrieval.",
+      "RagFlow配置": "RagFlow Configuration",
+      "检索设置": "Retrieval Settings",
+      "输出": "Output",
+      "ragflow_api_url": {
+        "label": "API URL",
+        "placeholder": "e.g., http://localhost:9380",
+        "help": "RagFlow service API URL"
+      },
+      "ragflow_api_key": {
+        "label": "API Key",
+        "placeholder": "Enter RagFlow API Key",
+        "help": "Get API Key from RagFlow settings"
+      },
+      "question": {
+        "label": "Question",
+        "placeholder": "Select question variable"
+      },
+      "dataset_ids": {
+        "label": "Dataset IDs",
+        "placeholder": "Select dataset IDs variable",
+        "help": "Get RagFlow dataset IDs from variable. Supports string, comma-separated, or JSON array format."
+      },
+      "similarity_threshold": {
+        "label": "Similarity Threshold",
+        "help": "Results below threshold are filtered, default 0.2"
+      },
+      "vector_similarity_weight": {
+        "label": "Vector Weight",
+        "help": "Vector similarity weight (0-1), remainder is keyword similarity"
+      },
+      "page_size": {
+        "label": "Result Count",
+        "help": "Number of retrieval results to return"
+      },
+      "use_kg": {
+        "label": "Knowledge Graph",
+        "help": "Enable knowledge graph for multi-hop retrieval"
+      },
+      "retrieved_result": {
+        "label": "Retrieved Result"
+      },
+      "chunks": {
+        "label": "Raw Chunks"
+      }
+    },
     "rag": {
       "name": "Document Retrieval",
       "description": "Searches knowledge bases and generates final answers using an LLM. Supports parallel question processing.",
