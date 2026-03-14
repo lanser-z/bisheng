@@ -836,7 +836,7 @@ const workflowTemplate = [
                     {
                         "key": "ragflow_api_key",
                         "label": "true",
-                        "type": "password",
+                        "type": "input",
                         "value": "",
                         "required": true,
                         "placeholder": "true",
@@ -887,7 +887,7 @@ const workflowTemplate = [
                     {
                         "key": "page_size",
                         "label": "true",
-                        "type": "input_number",
+                        "type": "number",
                         "value": 10,
                         "min": 1,
                         "max": 100,
