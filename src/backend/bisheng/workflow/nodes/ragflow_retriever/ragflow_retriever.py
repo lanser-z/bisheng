@@ -44,6 +44,7 @@ class RagFlowRetrieverNode(BaseNode):
         self._rerank_id = self.node_params.get('rerank_id', '')
         self._use_kg = self.node_params.get('use_kg', False)
         self._keyword = self.node_params.get('keyword', False)
+        self._max_content_length = self.node_params.get('max_content_length', 15000)
 
     def _parse_dataset_ids(self, dataset_ids_value: Any) -> List[str]:
         """
@@ -156,17 +157,36 @@ class RagFlowRetrieverNode(BaseNode):
             logger.info(f"节点 {self.name}: 未检索到相关内容")
             return {'retrieved_result': '', 'chunks': []}
 
-        # 拼接检索结果
+        # 拼接检索结果，限制总长度
         content_list = []
+        total_length = 0
+        truncated = False
+
         for i, chunk in enumerate(chunks, 1):
             content = chunk.get('content', '')
             similarity = chunk.get('similarity', 0)
             doc_name = chunk.get('document_name', '未知文档')
-            content_list.append(f"[{i}] {content}\n(来源: {doc_name}, 相似度: {similarity:.3f})")
+            chunk_text = f"[{i}] {content}\n(来源: {doc_name}, 相似度: {similarity:.3f})"
+
+            # 检查是否超过长度限制
+            if total_length + len(chunk_text) > self._max_content_length:
+                # 截断当前chunk以填满剩余空间
+                remaining = self._max_content_length - total_length
+                if remaining > 100:  # 至少保留100字符
+                    chunk_text = chunk_text[:remaining] + "..."
+                    content_list.append(chunk_text)
+                truncated = True
+                break
+
+            content_list.append(chunk_text)
+            total_length += len(chunk_text)
 
         retrieved_result = '\n\n'.join(content_list)
 
-        logger.info(f"节点 {self.name}: 检索到 {len(chunks)} 条结果")
+        if truncated:
+            logger.info(f"节点 {self.name}: 检索结果已截断至 {self._max_content_length} 字符")
+
+        logger.info(f"节点 {self.name}: 检索到 {len(chunks)} 条结果, 返回 {len(content_list)} 条, 总长度 {len(retrieved_result)} 字符")
 
         # 存储原始chunks供后续节点使用
         self.graph_state.set_variable(self.id, '$chunks$', chunks)

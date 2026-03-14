@@ -552,6 +552,10 @@
         "label": "知识图谱检索",
         "help": "启用知识图谱进行多跳检索"
       },
+      "max_content_length": {
+        "label": "最大内容长度",
+        "help": "返回内容的最大字符数，超过将截断"
+      },
       "retrieved_result": {
         "label": "检索结果"
       },

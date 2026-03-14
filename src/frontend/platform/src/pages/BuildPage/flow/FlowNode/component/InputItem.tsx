@@ -8,23 +8,31 @@ export default function InputItem({ type = 'text', char = false, linefeed = fals
     const [value, setValue] = useState(data.value ? String(data.value) : '');
     const { t } = useTranslation('flow');
 
-    // 初始化时同步外部数据（确保为整数）
+    // 初始化时同步外部数据（数字类型确保为整数）
     useEffect(() => {
         if (data.value !== undefined) {
-            const intValue = parseInt(data.value, 10);
-            setValue(isNaN(intValue) ? '' : String(intValue));
+            if (type === 'number') {
+                const intValue = parseInt(data.value, 10);
+                setValue(isNaN(intValue) ? '' : String(intValue));
+            } else {
+                setValue(String(data.value));
+            }
         }
-    }, [data.value]);
+    }, [data.value, type]);
 
-    // 处理输入变化（限制为整数）
+    // 处理输入变化
     const handleChange = (inputValue) => {
-        // 1. 过滤掉小数点和非数字字符（保留空值）
-        const filteredValue = inputValue.replace(/[^\d]/g, '');
-        // 2. 转换为整数（避免空字符串导致NaN）
-        const intValue = filteredValue ? parseInt(filteredValue, 10) : '';
-        // 3. 更新内部状态和父组件
-        setValue(filteredValue);
-        onChange(intValue);
+        if (type === 'number') {
+            // 数字类型：过滤掉小数点和非数字字符
+            const filteredValue = inputValue.replace(/[^\d]/g, '');
+            const intValue = filteredValue ? parseInt(filteredValue, 10) : '';
+            setValue(filteredValue);
+            onChange(intValue);
+        } else {
+            // 文本类型：直接使用输入值
+            setValue(inputValue);
+            onChange(inputValue);
+        }
     };
 
     if (char) return (

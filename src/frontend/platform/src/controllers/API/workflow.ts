@@ -899,6 +899,15 @@ const workflowTemplate = [
                         "type": "switch",
                         "value": false,
                         "help": "true"
+                    },
+                    {
+                        "key": "max_content_length",
+                        "label": "true",
+                        "type": "number",
+                        "value": 15000,
+                        "min": 1000,
+                        "max": 100000,
+                        "help": "true"
                     }
                 ]
             },

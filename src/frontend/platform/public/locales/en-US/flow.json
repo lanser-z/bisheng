@@ -551,6 +551,10 @@
         "label": "Knowledge Graph",
         "help": "Enable knowledge graph for multi-hop retrieval"
       },
+      "max_content_length": {
+        "label": "Max Content Length",
+        "help": "Maximum characters for returned content, truncates if exceeded"
+      },
       "retrieved_result": {
         "label": "Retrieved Result"
       },
