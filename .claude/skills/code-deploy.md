@@ -38,16 +38,25 @@ git diff --name-only HEAD~1
 ### 3. 后端更新流程
 
 ```bash
-# 1. 复制文件到两个容器
+# 1. 复制文件到容器
 docker cp src/backend/bisheng/workflow/nodes/my_node/my_node.py bisheng-backend:/app/bisheng/workflow/nodes/my_node/
-docker cp src/backend/bisheng/workflow/nodes/my_node/my_node.py bisheng-backend-worker:/app/bisheng/workflow/nodes/my_node/
 
-# 2. 重启容器使改动生效
-docker restart bisheng-backend bisheng-backend-worker
+# 2. 热重载（不丢失代码）
+# bisheng-backend: kill -11 uvicorn主进程，容器自动重启进程
+docker exec bisheng-backend kill -11 7
 
-# 3. 查看日志确认启动正常
+# bisheng-backend-worker: 热重载 celery worker
+docker exec bisheng-backend-worker pkill -HUP -f "celery.*worker"
+
+# 3. 查看日志确认重载成功
 docker logs bisheng-backend --tail 50
+docker logs bisheng-backend-worker --tail 50
 ```
+
+**⚠️ 重要说明**：
+- **bisheng-backend**：用 `kill -11 7` 触发 uvicorn 重启，代码不丢失
+- **bisheng-backend-worker**：用 `pkill -HUP` 热重载 celery
+- **禁止使用 `docker restart`**：会导致 copy 进去的代码丢失
 
 ### 4. 前端更新流程
 

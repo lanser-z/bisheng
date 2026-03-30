@@ -1,0 +1,524 @@
+{
+  "name": "QA-ACTION工作流",
+  "description": "基于有限问答集的智能问答匹配与执行",
+  "status": 2,
+  "flow_type": 10,
+  "nodes": [
+    {
+      "id": "start_1a2b3",
+      "type": "flowNode",
+      "position": {"x": 100, "y": 200},
+      "data": {
+        "v": "3",
+        "id": "start_1a2b3",
+        "name": "开始",
+        "type": "start",
+        "description": "工作流运行的起始节点",
+        "group_params": [
+          {
+            "name": "开场引导",
+            "params": [
+              {"key": "guide_word", "type": "textarea", "label": "true", "value": "请提供用户问题和问答列表", "placeholder": "true"},
+              {"key": "guide_question", "help": "true", "type": "input_list", "label": "true", "value": [""], "placeholder": "true"}
+            ]
+          },
+          {
+            "name": "全局变量",
+            "params": [
+              {"key": "user_info", "type": "var", "label": "true", "value": "", "global": "key"},
+              {"key": "current_time", "type": "var", "label": "true", "value": "", "global": "key"},
+              {"key": "chat_history", "type": "chat_history_num", "value": 5, "global": "key"},
+              {"key": "preset_question", "help": "true", "type": "input_list", "label": "true", "value": [{"key": "xyz789", "value": ""}], "global": "item:input_list", "placeholder": "true"},
+              {"key": "custom_variables", "help": "true", "type": "global_var", "label": "true", "value": [], "global": "item:input_list"}
+            ]
+          }
+        ]
+      },
+      "measured": {"width": 334, "height": 493}
+    },
+    {
+      "id": "input_4c5d6",
+      "data": {
+        "v": "3",
+        "id": "input_4c5d6",
+        "tab": {
+          "value": "form_input",
+          "options": [
+            {"key": "dialog_input", "help": "true", "label": "true"},
+            {"key": "form_input", "help": "true", "label": "true"}
+          ]
+        },
+        "name": "输入",
+        "type": "input",
+        "description": "接收用户口语化文字和问答列表",
+        "group_params": [
+          {
+            "name": "接收文本",
+            "params": [
+              {"key": "user_input", "tab": "dialog_input", "type": "var", "label": "true", "global": "key"}
+            ]
+          },
+          {
+            "name": "",
+            "params": [
+              {"key": "user_input_file", "tab": "dialog_input", "value": true, "groupTitle": true},
+              {"key": "file_parse_mode", "tab": "dialog_input", "type": "select_parsemode", "value": "extract_text"},
+              {"key": "dialog_files_content", "tab": "dialog_input", "type": "var", "label": "true", "global": "key"},
+              {"key": "dialog_files_content_size", "min": 0, "tab": "dialog_input", "type": "char_number", "label": "true", "value": 15000},
+              {"key": "dialog_file_accept", "tab": "dialog_input", "type": "select_fileaccept", "label": "true", "value": "all"},
+              {"key": "dialog_image_files", "tab": "dialog_input", "help": "true", "type": "var", "label": "true", "global": "key"},
+              {"key": "dialog_file_paths", "tab": "dialog_input", "help": "true", "type": "var", "label": "true", "global": "key"}
+            ],
+            "groupKey": "inputfile"
+          },
+          {
+            "name": "",
+            "params": [
+              {"key": "recommended_questions_flag", "tab": "dialog_input", "help": "true", "label": "true", "value": false, "hidden": "true", "groupTitle": true},
+              {"key": "recommended_llm", "tab": "dialog_input", "type": "bisheng_model", "label": "true", "value": 1, "required": true, "placeholder": "true"},
+              {"key": "recommended_system_prompt", "tab": "dialog_input", "type": "var_textarea", "label": "true", "value": "", "required": true},
+              {"key": "recommended_history_num", "tab": "dialog_input", "help": "true", "step": 1, "type": "slide", "label": "true", "scope": [1, 10], "value": 2}
+            ],
+            "groupKey": "custom"
+          },
+          {
+            "name": "",
+            "params": [
+              {
+                "key": "form_input",
+                "tab": "form_input",
+                "type": "form",
+                "label": "true",
+                "value": [
+                  {"key": "user_text", "type": "text", "value": "用户口语化文字", "options": [], "multiple": false, "required": true, "file_path": "file_path", "file_type": "all", "image_file": "image_file", "file_content": "file_content", "file_parse_mode": "extract_text", "file_content_size": 15000},
+                  {"key": "qa_list", "type": "text", "value": "问答列表JSON", "options": [], "multiple": false, "required": true, "file_path": "file_path", "file_type": "all", "image_file": "image_file", "file_content": "file_content", "file_parse_mode": "extract_text", "file_content_size": 15000}
+                ],
+                "global": "item:form_input"
+              }
+            ]
+          }
+        ]
+      },
+      "type": "flowNode",
+      "dragging": false,
+      "measured": {"width": 334, "height": 358},
+      "position": {"x": 350, "y": 200}
+    },
+    {
+      "id": "llm_7e8f9",
+      "type": "flowNode",
+      "position": {"x": 600, "y": 200},
+      "data": {
+        "v": "2",
+        "id": "llm_7e8f9",
+        "tab": {
+          "value": "single",
+          "options": [
+            {"key": "single", "label": "true"},
+            {"key": "batch", "label": "true"}
+          ]
+        },
+        "name": "LLM-问题匹配",
+        "type": "llm",
+        "description": "将口语化文字转为标准提问，并与问答列表匹配",
+        "group_params": [
+          {
+            "params": [
+              {"key": "batch_variable", "tab": "batch", "help": "true", "test": "var", "type": "user_question", "label": "true", "value": [], "global": "self", "linkage": "output", "required": true, "placeholder": "true"}
+            ]
+          },
+          {
+            "name": "模型设置",
+            "params": [
+              {"key": "model_id", "type": "bisheng_model", "label": "true", "value": 1, "required": true, "placeholder": "true"},
+              {"key": "temperature", "step": 0.1, "type": "slide", "label": "true", "scope": [0, 2], "value": 0.3}
+            ]
+          },
+          {
+            "name": "提示词",
+            "params": [
+              {"key": "system_prompt", "test": "var", "type": "var_textarea", "label": "true", "value": "# Role\n你是一个智能问答匹配专家。你的任务是将用户的口语化输入转换为标准提问，并从给定的问答列表中找出最匹配的问题。\n\n# Rules\n1. 首先将口语化文字转换为简洁、明确的标准提问\n2. 然后在问答列表中查找语义相似的问题\n3. 返回匹配度最高的问题列表（最多3个）\n\n# Output Format\n严格按JSON格式输出：\n{\n  \"standard_question\": \"转换后的标准提问\",\n  \"matched_questions\": [\n    {\"id\": \"问题ID\", \"question\": \"问题内容\", \"score\": 0.95}\n  ]\n}"},
+              {"key": "user_prompt", "test": "var", "type": "var_textarea", "label": "true", "value": "用户输入：{{#input_4c5d6.user_text#}}\n\n问答列表：\n{{#input_4c5d6.qa_list#}}", "required": true, "varZh": {"input_4c5d6.user_text": "输入/user_text", "input_4c5d6.qa_list": "输入/qa_list"}},
+              {"key": "image_prompt", "help": "true", "type": "image_prompt", "label": "true", "value": []}
+            ]
+          },
+          {
+            "name": "输出",
+            "params": [
+              {"key": "output_user", "help": "true", "type": "switch", "label": "true", "value": false},
+              {"key": "output", "help": "true", "type": "var", "label": "true", "value": [], "global": "code:value.map(el => ({ label: el.label, value: el.key }))"}
+            ]
+          }
+        ]
+      },
+      "measured": {"width": 334, "height": 836}
+    },
+    {
+      "id": "code_a1b2c",
+      "type": "flowNode",
+      "position": {"x": 850, "y": 200},
+      "data": {
+        "v": "1",
+        "id": "code_a1b2c",
+        "name": "代码-解析匹配结果",
+        "type": "code",
+        "description": "解析LLM输出的JSON，提取匹配的问题列表",
+        "group_params": [
+          {
+            "name": "入参",
+            "params": [
+              {"key": "code_input", "test": "input", "type": "code_input", "value": [{"key": "llm_output", "type": "ref", "label": "LLM输出", "value": "llm_7e8f9.output"}], "required": true}
+            ]
+          },
+          {
+            "name": "执行代码",
+            "params": [
+              {"key": "code", "type": "code", "value": "import json\n\ndef main(llm_output: str) -> dict:\n    try:\n        result = json.loads(llm_output)\n        matched = result.get('matched_questions', [])\n        return {\n            'standard_question': result.get('standard_question', ''),\n            'matched_questions': matched,\n            'has_match': len(matched) > 0,\n            'question_count': len(matched)\n        }\n    except json.JSONDecodeError:\n        return {\n            'standard_question': '',\n            'matched_questions': [],\n            'has_match': False,\n            'question_count': 0\n        }", "required": true}
+            ]
+          },
+          {
+            "name": "出参",
+            "params": [
+              {"key": "code_output", "type": "code_output", "value": [{"key": "standard_question", "type": "str"}, {"key": "matched_questions", "type": "list"}, {"key": "has_match", "type": "bool"}, {"key": "question_count", "type": "int"}], "global": "code:value.map(el => ({ label: el.key, value: el.key }))", "required": true}
+            ]
+          }
+        ]
+      },
+      "measured": {"width": 334, "height": 654}
+    },
+    {
+      "id": "output_d3e4f",
+      "type": "flowNode",
+      "position": {"x": 1100, "y": 200},
+      "data": {
+        "v": "2",
+        "id": "output_d3e4f",
+        "name": "输出-问题列表",
+        "type": "output",
+        "description": "返回匹配的问题列表供用户选择",
+        "group_params": [
+          {
+            "params": [
+              {
+                "key": "message",
+                "type": "var_textarea_file",
+                "label": "true",
+                "global": "key",
+                "required": true,
+                "placeholder": "true",
+                "value": {
+                  "msg": "找到 {{#code_a1b2c.question_count#}} 个相关问题：\n{{#code_a1b2c.matched_questions#}}",
+                  "files": []
+                },
+                "varZh": {
+                  "code_a1b2c.question_count": "代码-解析匹配结果/question_count",
+                  "code_a1b2c.matched_questions": "代码-解析匹配结果/matched_questions"
+                }
+              },
+              {
+                "key": "output_result",
+                "type": "output_form",
+                "label": "用户输入内容",
+                "global": "value.type=input",
+                "value": {"type": "", "value": ""},
+                "options": [],
+                "required": false
+              }
+            ]
+          }
+        ]
+      },
+      "measured": {"width": 334, "height": 433}
+    },
+    {
+      "id": "input_5g6h7",
+      "data": {
+        "v": "3",
+        "id": "input_5g6h7",
+        "tab": {
+          "value": "form_input",
+          "options": [
+            {"key": "dialog_input", "help": "true", "label": "true"},
+            {"key": "form_input", "help": "true", "label": "true"}
+          ]
+        },
+        "name": "输入-用户选择",
+        "type": "input",
+        "description": "接收用户选择的问题",
+        "group_params": [
+          {
+            "name": "接收文本",
+            "params": [
+              {"key": "user_input", "tab": "dialog_input", "type": "var", "label": "true", "global": "key"}
+            ]
+          },
+          {
+            "name": "",
+            "params": [
+              {"key": "user_input_file", "tab": "dialog_input", "value": true, "groupTitle": true},
+              {"key": "file_parse_mode", "tab": "dialog_input", "type": "select_parsemode", "value": "extract_text"},
+              {"key": "dialog_files_content", "tab": "dialog_input", "type": "var", "label": "true", "global": "key"},
+              {"key": "dialog_files_content_size", "min": 0, "tab": "dialog_input", "type": "char_number", "label": "true", "value": 15000},
+              {"key": "dialog_file_accept", "tab": "dialog_input", "type": "select_fileaccept", "label": "true", "value": "all"},
+              {"key": "dialog_image_files", "tab": "dialog_input", "help": "true", "type": "var", "label": "true", "global": "key"},
+              {"key": "dialog_file_paths", "tab": "dialog_input", "help": "true", "type": "var", "label": "true", "global": "key"}
+            ],
+            "groupKey": "inputfile"
+          },
+          {
+            "name": "",
+            "params": [
+              {"key": "recommended_questions_flag", "tab": "dialog_input", "help": "true", "label": "true", "value": false, "hidden": "true", "groupTitle": true},
+              {"key": "recommended_llm", "tab": "dialog_input", "type": "bisheng_model", "label": "true", "value": 1, "required": true, "placeholder": "true"},
+              {"key": "recommended_system_prompt", "tab": "dialog_input", "type": "var_textarea", "label": "true", "value": "", "required": true},
+              {"key": "recommended_history_num", "tab": "dialog_input", "help": "true", "step": 1, "type": "slide", "label": "true", "scope": [1, 10], "value": 2}
+            ],
+            "groupKey": "custom"
+          },
+          {
+            "name": "",
+            "params": [
+              {
+                "key": "form_input",
+                "tab": "form_input",
+                "type": "form",
+                "label": "true",
+                "value": [
+                  {"key": "selected_text", "type": "text", "value": "用户选择的文字", "options": [], "multiple": false, "required": true, "file_path": "file_path", "file_type": "all", "image_file": "image_file", "file_content": "file_content", "file_parse_mode": "extract_text", "file_content_size": 15000}
+                ],
+                "global": "item:form_input"
+              }
+            ]
+          }
+        ]
+      },
+      "type": "flowNode",
+      "dragging": false,
+      "measured": {"width": 334, "height": 358},
+      "position": {"x": 1350, "y": 200}
+    },
+    {
+      "id": "llm_8i9j0",
+      "type": "flowNode",
+      "position": {"x": 1600, "y": 200},
+      "data": {
+        "v": "2",
+        "id": "llm_8i9j0",
+        "tab": {
+          "value": "single",
+          "options": [
+            {"key": "single", "label": "true"},
+            {"key": "batch", "label": "true"}
+          ]
+        },
+        "name": "LLM-识别选择",
+        "type": "llm",
+        "description": "识别用户选择的问题",
+        "group_params": [
+          {
+            "params": [
+              {"key": "batch_variable", "tab": "batch", "help": "true", "test": "var", "type": "user_question", "label": "true", "value": [], "global": "self", "linkage": "output", "required": true, "placeholder": "true"}
+            ]
+          },
+          {
+            "name": "模型设置",
+            "params": [
+              {"key": "model_id", "type": "bisheng_model", "label": "true", "value": 1, "required": true, "placeholder": "true"},
+              {"key": "temperature", "step": 0.1, "type": "slide", "label": "true", "scope": [0, 2], "value": 0.1}
+            ]
+          },
+          {
+            "name": "提示词",
+            "params": [
+              {"key": "system_prompt", "test": "var", "type": "var_textarea", "label": "true", "value": "# Role\n你是一个意图识别专家。根据用户的口语化选择，从问题列表中识别用户选择的问题。\n\n# Output Format\n返回JSON：\n{\n  \"selected_id\": \"选中的问题ID\",\n  \"confidence\": 0.95\n}"},
+              {"key": "user_prompt", "test": "var", "type": "var_textarea", "label": "true", "value": "用户说：{{#input_5g6h7.selected_text#}}\n\n可选问题列表：\n{{#code_a1b2c.matched_questions#}}", "required": true, "varZh": {"input_5g6h7.selected_text": "输入-用户选择/selected_text", "code_a1b2c.matched_questions": "代码-解析匹配结果/matched_questions"}},
+              {"key": "image_prompt", "help": "true", "type": "image_prompt", "label": "true", "value": []}
+            ]
+          },
+          {
+            "name": "输出",
+            "params": [
+              {"key": "output_user", "help": "true", "type": "switch", "label": "true", "value": false},
+              {"key": "output", "help": "true", "type": "var", "label": "true", "value": [], "global": "code:value.map(el => ({ label: el.label, value: el.key }))"}
+            ]
+          }
+        ]
+      },
+      "measured": {"width": 334, "height": 836}
+    },
+    {
+      "id": "code_k1l2m",
+      "type": "flowNode",
+      "position": {"x": 1850, "y": 200},
+      "data": {
+        "v": "1",
+        "id": "code_k1l2m",
+        "name": "代码-执行动作",
+        "type": "code",
+        "description": "根据选中的问题执行对应动作",
+        "group_params": [
+          {
+            "name": "入参",
+            "params": [
+              {"key": "code_input", "test": "input", "type": "code_input", "value": [{"key": "selected_json", "type": "ref", "label": "选择结果", "value": "llm_8i9j0.output"}, {"key": "qa_list", "type": "ref", "label": "原始问答列表", "value": "input_4c5d6.qa_list"}], "required": true}
+            ]
+          },
+          {
+            "name": "执行代码",
+            "params": [
+              {"key": "code", "type": "code", "value": "import json\n\ndef main(selected_json: str, qa_list: str) -> dict:\n    try:\n        selected = json.loads(selected_json)\n        qa_data = json.loads(qa_list) if isinstance(qa_list, str) else qa_list\n        \n        selected_id = selected.get('selected_id', '')\n        \n        answer = ''\n        action = None\n        for item in qa_data:\n            if str(item.get('id', '')) == str(selected_id):\n                answer = item.get('answer', '')\n                action = item.get('action')\n                break\n        \n        return {\n            'selected_id': selected_id,\n            'answer': answer,\n            'action': action,\n            'action_type': action.get('type') if action else 'text'\n        }\n    except Exception as e:\n        return {\n            'selected_id': '',\n            'answer': f'处理失败: {str(e)}',\n            'action': None,\n            'action_type': 'error'\n        }", "required": true}
+            ]
+          },
+          {
+            "name": "出参",
+            "params": [
+              {"key": "code_output", "type": "code_output", "value": [{"key": "selected_id", "type": "str"}, {"key": "answer", "type": "str"}, {"key": "action", "type": "dict"}, {"key": "action_type", "type": "str"}], "global": "code:value.map(el => ({ label: el.key, value: el.key }))", "required": true}
+            ]
+          }
+        ]
+      },
+      "measured": {"width": 334, "height": 690}
+    },
+    {
+      "id": "output_n3o4p",
+      "type": "flowNode",
+      "position": {"x": 2100, "y": 200},
+      "data": {
+        "v": "2",
+        "id": "output_n3o4p",
+        "name": "输出-执行结果",
+        "type": "output",
+        "description": "返回答案或执行动作",
+        "group_params": [
+          {
+            "params": [
+              {
+                "key": "message",
+                "type": "var_textarea_file",
+                "label": "true",
+                "global": "key",
+                "required": true,
+                "placeholder": "true",
+                "value": {
+                  "msg": "{{#code_k1l2m.answer#}}",
+                  "files": []
+                },
+                "varZh": {
+                  "code_k1l2m.answer": "代码-执行动作/answer"
+                }
+              },
+              {
+                "key": "output_result",
+                "type": "output_form",
+                "label": "用户输入内容",
+                "global": "value.type=input",
+                "value": {"type": "", "value": ""},
+                "options": [],
+                "required": false
+              }
+            ]
+          }
+        ]
+      },
+      "measured": {"width": 334, "height": 433}
+    },
+    {
+      "id": "end_q5r6s",
+      "type": "flowNode",
+      "position": {"x": 2350, "y": 200},
+      "data": {
+        "v": "1",
+        "id": "end_q5r6s",
+        "name": "结束",
+        "type": "end",
+        "description": "工作流运行到此结束",
+        "group_params": []
+      },
+      "measured": {"width": 334, "height": 135}
+    }
+  ],
+  "edges": [
+    {
+      "id": "xy-edge__start_1a2b3right_handle-input_4c5d6left_handle",
+      "type": "customEdge",
+      "source": "start_1a2b3",
+      "target": "input_4c5d6",
+      "animated": true,
+      "sourceHandle": "right_handle",
+      "targetHandle": "left_handle"
+    },
+    {
+      "id": "xy-edge__input_4c5d6right_handle-llm_7e8f9left_handle",
+      "type": "customEdge",
+      "source": "input_4c5d6",
+      "target": "llm_7e8f9",
+      "animated": true,
+      "sourceHandle": "right_handle",
+      "targetHandle": "left_handle"
+    },
+    {
+      "id": "xy-edge__llm_7e8f9right_handle-code_a1b2cleft_handle",
+      "type": "customEdge",
+      "source": "llm_7e8f9",
+      "target": "code_a1b2c",
+      "animated": true,
+      "sourceHandle": "right_handle",
+      "targetHandle": "left_handle"
+    },
+    {
+      "id": "xy-edge__code_a1b2cright_handle-output_d3e4fleft_handle",
+      "type": "customEdge",
+      "source": "code_a1b2c",
+      "target": "output_d3e4f",
+      "animated": true,
+      "sourceHandle": "right_handle",
+      "targetHandle": "left_handle"
+    },
+    {
+      "id": "xy-edge__output_d3e4fright_handle-input_5g6h7left_handle",
+      "type": "customEdge",
+      "source": "output_d3e4f",
+      "target": "input_5g6h7",
+      "animated": true,
+      "sourceHandle": "right_handle",
+      "targetHandle": "left_handle"
+    },
+    {
+      "id": "xy-edge__input_5g6h7right_handle-llm_8i9j0left_handle",
+      "type": "customEdge",
+      "source": "input_5g6h7",
+      "target": "llm_8i9j0",
+      "animated": true,
+      "sourceHandle": "right_handle",
+      "targetHandle": "left_handle"
+    },
+    {
+      "id": "xy-edge__llm_8i9j0right_handle-code_k1l2mleft_handle",
+      "type": "customEdge",
+      "source": "llm_8i9j0",
+      "target": "code_k1l2m",
+      "animated": true,
+      "sourceHandle": "right_handle",
+      "targetHandle": "left_handle"
+    },
+    {
+      "id": "xy-edge__code_k1l2mright_handle-output_n3o4pleft_handle",
+      "type": "customEdge",
+      "source": "code_k1l2m",
+      "target": "output_n3o4p",
+      "animated": true,
+      "sourceHandle": "right_handle",
+      "targetHandle": "left_handle"
+    },
+    {
+      "id": "xy-edge__output_n3o4pright_handle-end_q5r6sleft_handle",
+      "type": "customEdge",
+      "source": "output_n3o4p",
+      "target": "end_q5r6s",
+      "animated": true,
+      "sourceHandle": "right_handle",
+      "targetHandle": "left_handle"
+    }
+  ],
+  "viewport": {"x": 0, "y": 0, "zoom": 1}
+}

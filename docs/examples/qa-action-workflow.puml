@@ -1,0 +1,60 @@
+@startuml qa-action-workflow
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam class {
+    BackgroundColor LightBlue
+    BorderColor Gray
+    ArrowColor Gray
+}
+
+title QA-ACTION 工作流节点架构图
+
+' === 节点定义 ===
+class "**start**\n开始" as start_node <<Start>> #LightGreen
+class "**input**\n输入-文字+问答列表" as input_1 <<Input>> #LightBlue
+class "**llm**\nLLM-问题匹配" as llm_1 <<LLM>> #LightPurple
+class "**code**\n代码-解析结果" as code_1 <<Code>> #LightCyan
+class "**output**\n输出-问题列表" as output_1 <<Output>> #LightYellow
+class "**input**\n输入-用户选择" as input_2 <<Input>> #LightBlue
+class "**llm**\nLLM-识别选择" as llm_2 <<LLM>> #LightPurple
+class "**code**\n代码-执行动作" as code_2 <<Code>> #LightCyan
+class "**output**\n输出-执行结果" as output_2 <<Output>> #LightYellow
+class "**end**\n结束" as end_node <<End>> #LightSalmon
+
+' === 节点属性 ===
+start_node : guide_word: 引导语
+input_1 : user_text: 口语化文字
+input_1 : qa_list: 问答列表JSON
+llm_1 : temperature: 0.3
+llm_1 : system_prompt: 匹配规则
+code_1 : 解析JSON提取匹配结果
+output_1 : 返回匹配的问题列表
+input_2 : selected_text: 用户选择
+llm_2 : temperature: 0.1
+llm_2 : 识别用户选择的问题ID
+code_2 : 查找答案并执行动作
+output_2 : 返回答案或跳转动作
+
+' === 控制流向 ===
+start_node --> input_1 : 初始化
+input_1 --> llm_1 : user_text, qa_list
+llm_1 --> code_1 : output(JSON)
+code_1 --> output_1 : matched_questions
+
+note right of code_1
+  阶段一: 匹配问题列表
+  返回给前端展示
+end note
+
+output_1 --> input_2 : 用户选择后继续
+input_2 --> llm_2 : selected_text
+llm_2 --> code_2 : question_id
+code_2 --> output_2 : answer, action
+output_2 --> end_node : 完成
+
+note right of code_2
+  阶段二: 执行动作
+  文本回复/页面跳转
+end note
+
+@enduml

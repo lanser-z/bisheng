@@ -1,0 +1,57 @@
+@startuml case-qa-action
+autonumber
+actor "用户" as User
+participant "前端" as Frontend
+participant "后端" as Backend
+participant "MCPs" as MCPs
+participant "Agent" as Agent
+
+== 第一阶段：语音输入与文字转换 ==
+User -> Frontend : 发送语音
+Frontend -> Backend : 语音数据
+Backend -> MCPs : 语音数据 + SID + Step
+MCPs -> Agent : ASR接口调用(语音)
+Agent --> MCPs : 返回文字
+MCPs -> Backend : 问答列表接口(文字 + SID)
+
+par 并行处理
+    Backend -> Frontend : 文字
+    Frontend -> User : 显示文字
+else
+    Backend --> MCPs : 返回问答列表(SID限制)
+end
+
+== 第二阶段：问题匹配 ==
+MCPs -> Agent : QA-ACTION接口(文字 + 问答列表)
+activate Agent
+Agent -> Agent : 启动QA-ACTION工作流
+Agent -> Agent : LLM节点：口语化文字整理成提问\n与问答列表匹配
+Agent --> MCPs : 返回匹配的问题列表
+deactivate Agent
+
+MCPs --> Backend : 问题列表
+Backend -> Frontend : 推送问题列表
+Frontend -> User : 显示问题列表
+
+== 第三阶段：用户选择问题 ==
+User -> Frontend : 语音挑选问题(可多个)
+Frontend -> Backend : 语音数据
+Backend -> MCPs : 语音数据 + SID + Step
+MCPs -> Agent : ASR接口调用(语音)
+Agent --> MCPs : 返回文字
+MCPs -> Agent : QA-ACTION工作流(文字)
+
+activate Agent
+Agent -> Agent : 识别用户选择的问题对应的答案
+Agent -> MCPs : 调用答案执行接口
+deactivate Agent
+
+MCPs -> Backend : 依次调用后端操作
+Backend -> Frontend : 显示数据或跳转
+Frontend -> User : 显示结果
+
+== 第四阶段：用户评价 ==
+User -> Frontend : 对问答执行过程评价
+Frontend -> Backend : 发送评价结果
+
+@enduml
